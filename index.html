@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DMZ 2.0 Countdown</title>
+<meta name="description" content="Countdown to Call of Duty: Modern Warfare 4 and the return of DMZ, with a daily PS5 price watch for Belgium.">
+<meta name="theme-color" content="#070a08">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23070a08' stroke='%239dff57' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%239dff57'/%3E%3Cpath d='M32 4v14M32 46v14M4 32h14M46 32h14' stroke='%239dff57' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Chakra+Petch:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070a08;
+    --panel: rgba(10, 16, 12, 0.82);
+    --panel-2: rgba(16, 24, 18, 0.9);
+    --line: #1d2a21;
+    --line-2: #2c3f31;
+    --text: #d9ded7;
+    --muted: #7f8c82;
+    --accent: #9dff57;
+    --accent-dim: rgba(157, 255, 87, 0.18);
+    --amber: #ffb547;
+    --red: #ff4d3d;
+    --mono: "Share Tech Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --head: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
+    --digits: "Chakra Petch", "Share Tech Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.45;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+
+  /* ---------- background layers ---------- */
+  .bg-grid {
+    position: fixed; inset: 0; z-index: -3; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(157,255,87,0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(157,255,87,0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 85%);
+  }
+  .radar {
+    position: fixed; z-index: -2; pointer-events: none;
+    width: 110vmax; height: 110vmax; right: -45vmax; top: -50vmax;
+    border-radius: 50%;
+    background:
+      repeating-radial-gradient(circle at center, transparent 0 79px, rgba(157,255,87,0.10) 80px 81px),
+      radial-gradient(circle at center, rgba(157,255,87,0.06), transparent 60%);
+    opacity: 0.9;
+  }
+  .radar::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, rgba(157,255,87,0.0) 0deg, rgba(157,255,87,0.0) 300deg, rgba(157,255,87,0.22) 360deg);
+    animation: sweep 6s linear infinite;
+  }
+  @keyframes sweep { to { transform: rotate(360deg); } }
+  .scanlines {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0 2px, transparent 2px 4px);
+    mix-blend-mode: multiply;
+  }
+
+  /* ---------- layout ---------- */
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 20px 16px 48px; }
+  .top {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    padding-bottom: 14px; border-bottom: 1px solid var(--line);
+  }
+  .brand-tag { color: var(--muted); font-size: 12px; letter-spacing: 0.22em; }
+  h1 {
+    font-family: var(--head); font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+    font-size: clamp(34px, 6vw, 56px); line-height: 0.95; margin: 4px 0 0;
+  }
+  h1 .two { color: var(--accent); }
+  h1 .sub { display: block; font-size: 0.42em; font-weight: 700; color: var(--muted); letter-spacing: 0.18em; margin-top: 6px; }
+  .status {
+    font-size: 12px; letter-spacing: 0.16em; color: var(--muted); padding: 8px 12px;
+    border: 1px solid var(--line-2); background: var(--panel);
+    display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+  }
+  .status b { color: var(--accent); font-weight: 400; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: blink 1.6s steps(2, start) infinite; }
+  @keyframes blink { to { visibility: hidden; } }
+
+  /* ---------- version chip + log ---------- */
+  .hud-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .log { position: relative; }
+  .log summary {
+    list-style: none; cursor: pointer; user-select: none; display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 10px; border: 1px solid var(--line-2); background: var(--panel);
+    font-size: 12px; letter-spacing: 0.16em; color: var(--muted);
+  }
+  .log summary::-webkit-details-marker { display: none; }
+  .log summary b { color: var(--amber); font-weight: 400; }
+  .log summary:hover, .log[open] summary { border-color: var(--amber); color: var(--text); }
+  .log summary:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+  .log-panel {
+    position: absolute; right: 0; top: calc(100% + 6px); z-index: 5;
+    width: min(560px, calc(100vw - 32px)); margin: 0; padding: 6px 12px 8px; list-style: none;
+    background: #0d1510; border: 1px solid var(--line-2); box-shadow: 0 12px 30px rgba(0,0,0,0.55);
+    font-size: 12.5px; max-height: 60vh; overflow-y: auto;
+  }
+  .log-panel li { display: grid; grid-template-columns: 44px 96px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .log-panel li:last-child { border-bottom: 0; }
+  .log-panel .v { color: var(--amber); }
+  .log-panel .v.sweep { color: var(--muted); }
+  .log-panel time { color: var(--muted); }
+
+  /* ---------- countdown ---------- */
+  .clock {
+    position: relative; margin: 26px 0 0; padding: 30px 18px 26px; text-align: center;
+    background: var(--panel); border: 1px solid var(--line);
+  }
+  .clock::before, .clock::after, .clock .c3, .clock .c4 {
+    content: ""; position: absolute; width: 18px; height: 18px; border-color: var(--accent); border-style: solid;
+  }
+  .clock::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+  .clock::after { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+  .clock .c3 { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+  .clock .c4 { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+  .eyebrow {
+    margin: 0 0 14px; font-family: var(--head); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.32em; font-size: 15px; color: var(--accent);
+  }
+  .digits { display: flex; justify-content: center; gap: clamp(8px, 2.5vw, 26px); flex-wrap: wrap; }
+  .unit { display: flex; flex-direction: column; align-items: center; min-width: 64px; }
+  .num {
+    font-family: var(--digits); font-weight: 700; font-size: clamp(44px, 11vw, 104px); line-height: 1; color: #f2fff0;
+    text-shadow: 0 0 18px rgba(157,255,87,0.55), 0 0 3px rgba(157,255,87,0.95);
+    font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+  }
+  .cap { margin-top: 6px; font-size: 11px; letter-spacing: 0.3em; color: var(--muted); }
+  .colon { font-family: var(--digits); font-weight: 700; font-size: clamp(36px, 9vw, 84px); line-height: 1; color: var(--line-2); padding-top: 4px; }
+  .target { margin: 20px 0 0; color: var(--muted); font-size: 12.5px; letter-spacing: 0.04em; }
+  .target b { color: var(--text); font-weight: 400; }
+  .progress { position: relative; height: 8px; margin: 18px auto 0; max-width: 640px; background: #0e1510; border: 1px solid var(--line-2); overflow: hidden; }
+  .bar { height: 100%; width: 0; background: linear-gradient(90deg, rgba(157,255,87,0.35), var(--accent)); box-shadow: 0 0 12px rgba(157,255,87,0.5); transition: width 1s ease; }
+  .milestones { display: flex; justify-content: center; gap: 8px 22px; flex-wrap: wrap; margin: 12px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--muted); }
+  .milestones li::before { content: "▸ "; color: var(--accent); }
+  .milestones li.done { text-decoration: line-through; opacity: 0.6; }
+  .clock.live .num { color: var(--accent); }
+  .go { display: none; margin: 14px 0 0; font-family: var(--head); font-weight: 800; font-size: 34px; letter-spacing: 0.2em; color: var(--accent); }
+  .clock.live .go { display: block; }
+
+  /* ---------- prices ---------- */
+  .prices { margin-top: 28px; }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  h2 { font-family: var(--head); font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; font-size: 26px; margin: 0; }
+  h2 span { color: var(--muted); font-weight: 500; }
+  .stamp { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
+  .best {
+    margin-top: 16px; padding: 18px; border: 1px solid var(--accent); background: linear-gradient(135deg, rgba(157,255,87,0.10), rgba(157,255,87,0.02));
+    display: grid; grid-template-columns: 1fr auto; gap: 12px 20px; align-items: center;
+  }
+  .best .tag { font-size: 11px; letter-spacing: 0.28em; color: var(--accent); }
+  .best .shop { font-family: var(--head); font-weight: 700; font-size: 26px; text-transform: uppercase; line-height: 1.05; margin: 4px 0 2px; }
+  .best .meta { color: var(--muted); font-size: 12.5px; }
+  .best .price { font-size: clamp(34px, 6vw, 48px); line-height: 1; color: #f2fff0; text-shadow: 0 0 12px rgba(157,255,87,0.4); text-align: right; }
+  .best .price s { display: block; font-size: 15px; color: var(--muted); text-shadow: none; margin-bottom: 4px; }
+  .best .cta { grid-column: 1 / -1; display: flex; gap: 10px 18px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+  .chips { display: flex; gap: 8px 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .chips b { color: var(--text); font-weight: 400; }
+  .btn {
+    display: inline-block; padding: 9px 16px; border: 1px solid var(--accent); color: var(--accent); text-decoration: none;
+    letter-spacing: 0.18em; font-size: 12px; text-transform: uppercase; background: rgba(157,255,87,0.06);
+  }
+  .btn:hover { background: var(--accent); color: #06110a; }
+
+  .filters { display: flex; gap: 6px; margin: 18px 0 8px; flex-wrap: wrap; }
+  .filters button {
+    font: inherit; font-size: 12px; letter-spacing: 0.16em; padding: 6px 12px; cursor: pointer;
+    background: transparent; color: var(--muted); border: 1px solid var(--line-2);
+  }
+  .filters button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+
+  .list { border: 1px solid var(--line); background: var(--panel); }
+  .row {
+    display: grid; grid-template-columns: 1fr 150px 110px 90px; gap: 10px 14px; align-items: center;
+    padding: 11px 14px; border-bottom: 1px solid var(--line);
+  }
+  .row:last-child { border-bottom: 0; }
+  .row.head { font-size: 11px; letter-spacing: 0.22em; color: var(--muted); background: var(--panel-2); }
+  .row .shop { font-family: var(--head); font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.1; }
+  .row .note { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--muted); text-transform: none; letter-spacing: 0; margin-top: 3px; font-weight: 400; }
+  .row .ed { font-size: 12px; color: var(--muted); }
+  .row .ed i { font-style: normal; display: inline-block; padding: 2px 7px; border: 1px solid var(--line-2); margin: 2px 4px 2px 0; }
+  .row .ed i.disc { border-color: #3b5a44; color: #b8d8bf; }
+  .row .ed i.digital { border-color: #4a4f2f; color: #e0dc9a; }
+  .row .ed i.vault { border-color: #6a4a2f; color: var(--amber); }
+  .row .pr { font-size: 20px; color: #f2fff0; text-align: right; white-space: nowrap; }
+  .row .pr s { display: block; font-size: 11px; color: var(--muted); }
+  .row .go-link { text-align: right; }
+  .row .go-link a { font-size: 11px; letter-spacing: 0.18em; text-decoration: none; border-bottom: 1px solid transparent; }
+  .row .go-link a:hover { border-bottom-color: var(--accent); }
+  .row.cheapest { background: rgba(157,255,87,0.05); }
+  .row .best-in { display: inline-block; font-size: 10px; letter-spacing: 0.18em; color: var(--accent); border: 1px solid var(--accent); padding: 1px 6px; margin-left: 8px; vertical-align: middle; }
+  .unavail { margin: 12px 0 0; font-size: 12px; color: var(--muted); }
+  .unavail b { color: var(--amber); font-weight: 400; letter-spacing: 0.14em; }
+  .empty { padding: 24px; text-align: center; color: var(--muted); }
+
+  footer { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  @media (max-width: 700px) {
+    .row { grid-template-columns: 1fr auto; grid-template-areas: "shop pr" "ed go"; gap: 8px 12px; }
+    .row.head { display: none; }
+    .row .shop { grid-area: shop; }
+    .row .pr { grid-area: pr; align-self: start; }
+    .row .ed { grid-area: ed; }
+    .row .go-link { grid-area: go; text-align: right; }
+    .best { grid-template-columns: 1fr; }
+    .best .price { text-align: left; }
+    .hud-right { width: 100%; justify-content: space-between; }
+    .log-panel { width: calc(100vw - 32px); right: auto; left: 0; }
+    .log-panel li { grid-template-columns: 44px 1fr; }
+    .log-panel li span:last-child { grid-column: 1 / -1; }
+  }
+  @media (max-width: 520px) {
+    .digits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .colon { display: none; }
+    .unit { min-width: 0; }
+    .num { font-size: clamp(38px, 11.5vw, 56px); }
+    .cap { font-size: 10px; letter-spacing: 0.2em; }
+    .clock { padding: 24px 12px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .radar::after, .dot { animation: none; }
+    .bar { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="radar" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<main class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-tag">// OPERATION EXFIL</div>
+      <h1>DMZ <span class="two">2.0</span>
+        <span class="sub">Call of Duty: Modern Warfare 4 · PS5</span>
+      </h1>
+    </div>
+    <div class="hud-right">
+      <details class="log" id="log">
+        <summary title="Version history"><b id="ver">v—</b> log ▾</summary>
+        <ol class="log-panel" id="log-panel"><li><span></span><span></span><span>loading…</span></li></ol>
+      </details>
+      <div class="status"><span class="dot"></span> STATUS: <b id="status-text">PRE-DEPLOYMENT</b></div>
+    </div>
+  </header>
+
+  <section class="clock" id="clock" aria-live="polite">
+    <span class="c3"></span><span class="c4"></span>
+    <p class="eyebrow" id="eyebrow">Exfil window opens in</p>
+    <div class="digits">
+      <div class="unit"><span class="num" id="d">--</span><span class="cap">DAYS</span></div>
+      <div class="colon">:</div>
+      <div class="unit"><span class="num" id="h">--</span><span class="cap">HOURS</span></div>
+      <div class="colon">:</div>
+      <div class="unit"><span class="num" id="m">--</span><span class="cap">MIN</span></div>
+      <div class="colon">:</div>
+      <div class="unit"><span class="num" id="s">--</span><span class="cap">SEC</span></div>
+    </div>
+    <div class="go">GO GO GO</div>
+    <p class="target" id="target-line"></p>
+    <div class="progress" title="Infil progress since the reveal on 28 May 2026"><div class="bar" id="bar"></div></div>
+    <ul class="milestones" id="milestones">
+      <li data-t="2026-05-28T00:00:00Z">Reveal · 28 May 2026</li>
+      <li data-t="2026-10-15T22:00:00Z">Campaign early access (digital pre-orders) · 16 Oct</li>
+      <li data-t="2026-10-22T22:00:00Z">Full launch incl. DMZ · 23 Oct 2026</li>
+    </ul>
+  </section>
+
+  <section class="prices" id="prices">
+    <div class="sec-head">
+      <h2>Supply drop <span>// PS5 price watch</span></h2>
+      <span class="stamp" id="stamp">LAST SWEEP: —</span>
+    </div>
+
+    <div class="best" id="best" hidden></div>
+
+    <div class="filters" role="group" aria-label="Filter offers">
+      <button type="button" data-f="all" aria-pressed="true">ALL</button>
+      <button type="button" data-f="disc" aria-pressed="false">DISC</button>
+      <button type="button" data-f="digital" aria-pressed="false">DIGITAL</button>
+      <button type="button" data-f="vault" aria-pressed="false">VAULT</button>
+    </div>
+
+    <div class="list" id="list">
+      <div class="row head"><span>SHOP</span><span>EDITION</span><span style="text-align:right">PRICE</span><span></span></div>
+      <div class="empty" id="list-empty">Loading price data…</div>
+    </div>
+    <p class="unavail" id="unavail"></p>
+  </section>
+
+  <footer>
+    <span>Unofficial fan page — not affiliated with Activision or Sony. Prices are daily snapshots and can change; always check the shop before you buy.</span>
+    <span id="foot-right">Daily sweep around 06:00 Brussels time.</span>
+  </footer>
+</main>
+
+<script>
+(function () {
+  // ---------- constants ----------
+  var T0 = Date.UTC(2026, 9, 22, 22, 0, 0);     // 23 Oct 2026 00:00 Brussels = 22 Oct 22:00 UTC (PS Store unlock)
+  var TSTART = Date.UTC(2026, 4, 28, 0, 0, 0);  // reveal, 28 May 2026
+  var $ = function (id) { return document.getElementById(id); };
+  var eur = new Intl.NumberFormat('nl-BE', { style: 'currency', currency: 'EUR' });
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+
+  // ---------- countdown ----------
+  function tick() {
+    var now = Date.now();
+    var diff = T0 - now;
+    var clock = $('clock');
+    if (diff <= 0) {
+      $('d').textContent = '00'; $('h').textContent = '00'; $('m').textContent = '00'; $('s').textContent = '00';
+      $('eyebrow').textContent = 'Exfil window is open';
+      $('status-text').textContent = 'DEPLOYED';
+      clock.classList.add('live');
+      $('bar').style.width = '100%';
+    } else {
+      var sec = Math.floor(diff / 1000);
+      var d = Math.floor(sec / 86400); sec -= d * 86400;
+      var h = Math.floor(sec / 3600); sec -= h * 3600;
+      var m = Math.floor(sec / 60); sec -= m * 60;
+      $('d').textContent = d < 100 ? pad(d) : String(d);
+      $('h').textContent = pad(h);
+      $('m').textContent = pad(m);
+      $('s').textContent = pad(sec);
+      var pct = Math.max(0, Math.min(100, (now - TSTART) / (T0 - TSTART) * 100));
+      $('bar').style.width = pct.toFixed(2) + '%';
+      if (now >= Date.UTC(2026, 9, 15, 22, 0, 0)) { $('status-text').textContent = 'EARLY ACCESS LIVE'; }
+    }
+    var items = document.querySelectorAll('#milestones li');
+    for (var i = 0; i < items.length; i++) {
+      items[i].classList.toggle('done', now >= Date.parse(items[i].getAttribute('data-t')));
+    }
+  }
+  function targetLine() {
+    var t = new Date(T0);
+    var opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+    var brussels = new Intl.DateTimeFormat('en-GB', Object.assign({ timeZone: 'Europe/Brussels' }, opts)).format(t);
+    var html = 'T-0: <b>' + brussels + '</b> Brussels time (22 Oct, 22:00 UTC — PS Store unlock)';
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz && tz !== 'Europe/Brussels' && tz !== 'Europe/Amsterdam' && tz !== 'Europe/Paris' && tz !== 'Europe/Berlin') {
+        var local = new Intl.DateTimeFormat('en-GB', Object.assign({ timeZoneName: 'short' }, opts)).format(t);
+        html += ' · your time: <b>' + local + '</b>';
+      }
+    } catch (e) {}
+    $('target-line').innerHTML = html;
+  }
+  targetLine();
+  tick();
+  setInterval(tick, 1000);
+
+  // ---------- data loading ----------
+  function load(name) {
+    return fetch(name + '?t=' + Math.floor(Date.now() / 60000), { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error(name + ' ' + r.status);
+      return r.json();
+    });
+  }
+
+  // ---------- version chip + log ----------
+  function fmtDate(iso) {
+    var d = new Date(iso + 'T12:00:00Z');
+    return new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', timeZone: 'UTC' }).format(d);
+  }
+  load('changelog.json').then(function (log) {
+    var latest = null;
+    for (var i = 0; i < log.length; i++) { if (log[i].version) { latest = log[i].version; break; } }
+    $('ver').textContent = latest ? 'v' + latest : 'v?';
+    var list = $('log-panel');
+    list.innerHTML = '';
+    if (!log.length) { list.innerHTML = '<li><span></span><span></span><span>no entries yet</span></li>'; return; }
+    log.forEach(function (e) {
+      var li = document.createElement('li');
+      var v = document.createElement('span'); v.className = 'v' + (e.version ? '' : ' sweep'); v.textContent = e.version ? 'v' + e.version : 'sweep';
+      var t = document.createElement('time'); t.dateTime = e.date; t.textContent = fmtDate(e.date) + ' ' + e.date.slice(0, 4);
+      var s = document.createElement('span'); s.textContent = e.text;
+      li.appendChild(v); li.appendChild(t); li.appendChild(s); list.appendChild(li);
+    });
+  }).catch(function () { $('ver').textContent = 'v?'; $('log-panel').innerHTML = '<li><span></span><span></span><span>log unavailable</span></li>'; });
+  document.addEventListener('click', function (ev) {
+    var d = $('log'); if (d.open && !d.contains(ev.target)) d.open = false;
+  });
+
+  // ---------- price watch ----------
+  var EDITION = {
+    standard: { label: 'Standard', cls: '' },
+    steelbook: { label: 'Steelbook', cls: '' },
+    vault: { label: 'Vault Edition', cls: 'vault' }
+  };
+  var DATA = null, FILTER = 'all';
+
+  function matches(o) {
+    if (FILTER === 'all') return true;
+    if (FILTER === 'vault') return o.edition === 'vault';
+    return o.format === FILTER && o.edition !== 'vault';
+  }
+  function tagsFor(o) {
+    var ed = EDITION[o.edition] || { label: o.edition, cls: '' };
+    var fmtCls = o.format === 'digital' ? 'digital' : 'disc';
+    return '<i class="' + (ed.cls || fmtCls) + '">' + ed.label + '</i><i class="' + fmtCls + '">' + (o.format === 'digital' ? 'Digital' : 'Disc') + '</i>';
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  function render() {
+    var offers = DATA.offers.slice().sort(function (a, b) { return a.price - b.price; });
+    var cheapestByKey = {};
+    offers.forEach(function (o) {
+      var k = (o.edition === 'vault') ? 'vault' : o.format;
+      if (!cheapestByKey[k]) cheapestByKey[k] = o;
+    });
+
+    // best deal card (cheapest non-vault offer)
+    var best = offers.filter(function (o) { return o.edition !== 'vault'; })[0] || offers[0];
+    if (best) {
+      var b = $('best'); b.hidden = false;
+      var chips = [];
+      if (cheapestByKey.disc) chips.push('Cheapest disc: <b>' + eur.format(cheapestByKey.disc.price) + '</b> ' + esc(cheapestByKey.disc.shop));
+      if (cheapestByKey.digital) chips.push('Cheapest digital: <b>' + eur.format(cheapestByKey.digital.price) + '</b> ' + esc(cheapestByKey.digital.shop));
+      if (cheapestByKey.vault) chips.push('Vault: <b>' + eur.format(cheapestByKey.vault.price) + '</b> ' + esc(cheapestByKey.vault.shop));
+      b.innerHTML =
+        '<div><div class="tag">BEST DEAL · ' + esc((EDITION[best.edition] || {}).label || best.edition).toUpperCase() + ' · ' + (best.format === 'digital' ? 'DIGITAL' : 'DISC') + '</div>' +
+        '<div class="shop">' + esc(best.shop) + '</div><div class="meta">' + esc(best.note || '') + '</div></div>' +
+        '<div class="price">' + (best.list_price ? '<s>' + eur.format(best.list_price) + '</s>' : '') + eur.format(best.price) + '</div>' +
+        '<div class="cta"><div class="chips">' + chips.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div>' +
+        '<a class="btn" href="' + esc(best.url) + '" target="_blank" rel="noopener">Open offer ↗</a></div>';
+    }
+
+    // list
+    var list = $('list');
+    var rows = list.querySelectorAll('.row:not(.head), .empty');
+    for (var i = 0; i < rows.length; i++) rows[i].remove();
+    var shown = 0;
+    offers.forEach(function (o) {
+      if (!matches(o)) return;
+      shown++;
+      var k = (o.edition === 'vault') ? 'vault' : o.format;
+      var isBest = cheapestByKey[k] === o;
+      var row = document.createElement('div');
+      row.className = 'row' + (isBest ? ' cheapest' : '');
+      row.innerHTML =
+        '<div class="shop">' + esc(o.shop) + (isBest ? '<span class="best-in">BEST ' + k.toUpperCase() + '</span>' : '') +
+          (o.note ? '<span class="note">' + esc(o.note) + '</span>' : '') + '</div>' +
+        '<div class="ed">' + tagsFor(o) + '</div>' +
+        '<div class="pr">' + (o.list_price ? '<s>' + eur.format(o.list_price) + '</s>' : '') + eur.format(o.price) + '</div>' +
+        '<div class="go-link"><a href="' + esc(o.url) + '" target="_blank" rel="noopener">OPEN ↗</a></div>';
+      list.appendChild(row);
+    });
+    if (!shown) { var e = document.createElement('div'); e.className = 'empty'; e.textContent = 'No offers in this category yet.'; list.appendChild(e); }
+
+    // stamp + unavailable
+    var upd = new Date(DATA.updated);
+    $('stamp').textContent = 'LAST SWEEP: ' + new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Brussels' }).format(upd) + ' (Brussels)';
+    if (DATA.unavailable && DATA.unavailable.length) {
+      $('unavail').innerHTML = '<b>NOT READ THIS SWEEP:</b> ' + DATA.unavailable.map(function (u) { return esc(u.shop) + ' (' + esc(u.reason) + ')'; }).join(' · ');
+    } else { $('unavail').textContent = ''; }
+  }
+
+  document.querySelectorAll('.filters button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      FILTER = btn.getAttribute('data-f');
+      document.querySelectorAll('.filters button').forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      if (DATA) render();
+    });
+  });
+
+  load('prices.json').then(function (data) { DATA = data; render(); }).catch(function (err) {
+    $('list-empty').textContent = 'Price data could not be loaded (' + err.message + '). Open the page via its web address, not as a local file.';
+  });
+})();
+</script>
+</body>
+</html>

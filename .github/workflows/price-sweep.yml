@@ -1,14 +1,15 @@
-name: Price sweep & deploy
+name: Deploy page (and optional API sweep)
+
+# The daily price sweep is done by a scheduled Claude task on Tom's PC (Anysite
+# MCP), which pushes prices.json / changelog.json to main. Every push to main
+# redeploys GitHub Pages here. The "sweep" job only runs on a manual start and
+# only when an ANYSITE_API_KEY secret exists (Anysite API plan) — otherwise it
+# is skipped and the page is just redeployed.
 
 on:
-  schedule:
-    # 06:03 Brussels: 04:03 UTC in summer (CEST), 05:03 UTC in winter (CET).
-    # Both slots fire; the gate step lets only the one that lands at 06:xx local run.
-    - cron: "3 4 * * *"
-    - cron: "3 5 * * *"
-  workflow_dispatch:        # "Run workflow" button in the Actions tab
   push:
-    branches: [main]        # any manual upload/edit redeploys the page
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,41 +17,28 @@ permissions:
   id-token: write
 
 concurrency:
-  group: price-sweep
+  group: pages-deploy
   cancel-in-progress: false
 
 jobs:
   sweep:
-    if: github.event_name != 'push'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    outputs:
-      ran: ${{ steps.gate.outputs.go }}
     steps:
-      - name: Gate — only at 06:xx Brussels (or when started by hand)
-        id: gate
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(TZ=Europe/Brussels date +%H)" = "06" ]; then
-            echo "go=1" >> "$GITHUB_OUTPUT"
-          else
-            echo "go=0" >> "$GITHUB_OUTPUT"; echo "Not the 06:00 Brussels slot — skipping."
-          fi
-
       - uses: actions/checkout@v4
-        if: steps.gate.outputs.go == '1'
-
       - uses: actions/setup-python@v5
-        if: steps.gate.outputs.go == '1'
         with:
           python-version: "3.12"
-
-      - name: Sweep prices (Anysite API)
-        if: steps.gate.outputs.go == '1'
+      - name: Sweep prices (only with an Anysite API key)
         env:
           ANYSITE_API_KEY: ${{ secrets.ANYSITE_API_KEY }}
-        run: python3 tools/sweep.py
-
+        run: |
+          if [ -z "$ANYSITE_API_KEY" ]; then
+            echo "No ANYSITE_API_KEY secret — skipping the API sweep (the Claude task does the daily sweep)."
+            exit 0
+          fi
+          python3 tools/sweep.py
       - name: Commit prices.json / changelog.json
-        if: steps.gate.outputs.go == '1'
         run: |
           git config user.name "dmz-price-bot"
           git config user.email "dmz-price-bot@users.noreply.github.com"
@@ -64,7 +52,7 @@ jobs:
 
   deploy:
     needs: sweep
-    if: always() && (github.event_name == 'push' || needs.sweep.outputs.ran == '1')
+    if: always()
     runs-on: ubuntu-latest
     environment:
       name: github-pages

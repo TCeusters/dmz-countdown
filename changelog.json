@@ -1,6 +1,11 @@
 [
   {
     "date": "2026-09-27",
+    "version": "4",
+    "text": "Custom favicon and home-screen icon added. Daily price sweep now runs as a scheduled Claude task on Tom's PC (Anysite MCP); GitHub Action only deploys."
+  },
+  {
+    "date": "2026-09-27",
     "version": "3",
     "text": "Log shrunk to a version chip in the header (click for history). Daily price sweep now runs as a GitHub Action via the Anysite API. iPhone widget script added (Scriptable, clock only)."
   },

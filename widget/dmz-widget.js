@@ -81,13 +81,30 @@ function mono(stack, text, size, color, bold) {
   return t;
 }
 
-// header
+// header (skull icon from the page, cached; falls back to a green dot)
 const head = w.addStack();
 head.centerAlignContent();
-const dot = head.addText("●");
-dot.font = Font.systemFont(7);
-dot.textColor = C.accent;
-head.addSpacer(5);
+let icon = null;
+try {
+  const fm = FileManager.local();
+  const cache = fm.joinPath(fm.cacheDirectory(), "dmz-icon.png");
+  if (fm.fileExists(cache)) {
+    icon = fm.readImage(cache);
+  } else {
+    icon = await new Request("https://tceusters.github.io/dmz-countdown/icons/icon-192.png").loadImage();
+    fm.writeImage(cache, icon);
+  }
+} catch (e) { icon = null; }
+if (icon) {
+  const im = head.addImage(icon);
+  im.imageSize = new Size(small ? 18 : 22, small ? 18 : 22);
+  im.cornerRadius = 4;
+} else {
+  const dot = head.addText("●");
+  dot.font = Font.systemFont(7);
+  dot.textColor = C.accent;
+}
+head.addSpacer(6);
 mono(head, small ? "DMZ 2.0" : "DMZ 2.0 // MW4", 10, C.muted, false);
 head.addSpacer();
 mono(head, live ? "DEPLOYED" : "T-0 23 OCT", 10, live ? C.accent : C.amber, false);

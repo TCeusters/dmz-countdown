@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-27T17:30:00Z",
+  "updated": "2026-09-27T21:54:47Z",
   "currency": "EUR",
   "game": "Call of Duty: Modern Warfare 4 (PS5)",
   "offers": [
@@ -7,7 +7,7 @@
       "shop": "Amazon.fr",
       "edition": "standard",
       "format": "disc",
-      "price": 59.90,
+      "price": 59.9,
       "list_price": 79.99,
       "url": "https://www.amazon.fr/dp/B0H37PK1NX",
       "note": "French box, game itself is multi-language. Sold & shipped by Amazon, delivers to Belgium.",
@@ -27,7 +27,7 @@
       "shop": "idealo.de — alternate.de",
       "edition": "standard",
       "format": "disc",
-      "price": 71.90,
+      "price": 71.9,
       "list_price": null,
       "url": "https://www.idealo.de/preisvergleich/OffersOfProduct/210757850_-call-of-duty-modern-warfare-4-ps5.html",
       "note": "Cheapest German shop on idealo.de. Shipping extra (€82.88 delivered in DE); delivery to Belgium not guaranteed.",
@@ -44,43 +44,13 @@
       "ships_be": "yes"
     },
     {
-      "shop": "Smartoys (BE)",
-      "edition": "standard",
-      "format": "disc",
-      "price": 74.99,
-      "list_price": null,
-      "url": "https://www.smartoys.be/catalog/jeux-video-playstation-call-duty-modern-warfare-version-ps5-p-0196388866243.html",
-      "note": "Pre-order; store pickup in Wallonia/Brussels.",
-      "ships_be": "yes"
-    },
-    {
       "shop": "Coolblue (BE)",
       "edition": "standard",
       "format": "disc",
-      "price": 75.00,
+      "price": 75.0,
       "list_price": null,
       "url": "https://www.coolblue.be/nl/product/980723/call-of-duty-modern-warfare-4-ps5.html",
       "note": "Price read from the Coolblue NL listing; BE price is normally identical.",
-      "ships_be": "yes"
-    },
-    {
-      "shop": "bol.com — Steelbook Edition",
-      "edition": "steelbook",
-      "format": "disc",
-      "price": 79.99,
-      "list_price": null,
-      "url": "https://www.bol.com/be/nl/p/call-of-duty-modern-warfare-4-steelbook-edition-ps5/9300000301414410/",
-      "note": "Standard game in a steelbook case.",
-      "ships_be": "yes"
-    },
-    {
-      "shop": "MediaMarkt (BE) — FR version",
-      "edition": "standard",
-      "format": "disc",
-      "price": 79.99,
-      "list_price": null,
-      "url": "https://www.mediamarkt.be/nl/product/_call-of-duty-modern-warfare-4-ps5-2238573.html",
-      "note": "French box.",
       "ships_be": "yes"
     },
     {
@@ -94,6 +64,16 @@
       "ships_be": "yes"
     },
     {
+      "shop": "MediaMarkt (BE) — FR version",
+      "edition": "standard",
+      "format": "disc",
+      "price": 79.99,
+      "list_price": null,
+      "url": "https://www.mediamarkt.be/nl/product/_call-of-duty-modern-warfare-4-ps5-2238573.html",
+      "note": "French box.",
+      "ships_be": "yes"
+    },
+    {
       "shop": "PlayStation Store (BE)",
       "edition": "standard",
       "format": "digital",
@@ -102,6 +82,16 @@
       "url": "https://store.playstation.com/nl-be/product/EP0002-PPSA07950_00-CODMW4STANDARD01",
       "note": "Digital pre-order: campaign early access from 16 Oct + bonus items.",
       "ships_be": "n/a"
+    },
+    {
+      "shop": "bol.com — Steelbook Edition",
+      "edition": "steelbook",
+      "format": "disc",
+      "price": 79.99,
+      "list_price": null,
+      "url": "https://www.bol.com/be/nl/p/call-of-duty-modern-warfare-4-steelbook-edition-ps5/9300000301414410/",
+      "note": "Standard game in a steelbook case.",
+      "ships_be": "yes"
     },
     {
       "shop": "PlayStation Store (BE)",
@@ -115,10 +105,29 @@
     }
   ],
   "unavailable": [
-    { "shop": "Fnac.be", "reason": "blocked by bot protection" },
-    { "shop": "Dreamland", "reason": "blocked by bot protection" },
-    { "shop": "Game Mania", "reason": "no readable listing found" },
-    { "shop": "Krëfel", "reason": "no listing found" },
-    { "shop": "Amazon.nl", "reason": "no MW4 PS5 listing yet" }
+    {
+      "shop": "Smartoys (BE)",
+      "reason": "blocked by bot protection"
+    },
+    {
+      "shop": "Amazon.nl",
+      "reason": "no MW4 PS5 listing yet"
+    },
+    {
+      "shop": "Fnac.be",
+      "reason": "blocked by bot protection"
+    },
+    {
+      "shop": "Dreamland",
+      "reason": "page read but no price shown"
+    },
+    {
+      "shop": "Game Mania",
+      "reason": "timed out (no readable listing)"
+    },
+    {
+      "shop": "Krëfel",
+      "reason": "no listing found"
+    }
   ]
 }

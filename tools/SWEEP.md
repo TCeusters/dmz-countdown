@@ -1,13 +1,15 @@
 # Daily price sweep — procedure
 
-Runs every morning at ~06:00 Brussels as a GitHub Action
-(`.github/workflows/price-sweep.yml` → `tools/sweep.py`). Goal: refresh
-`prices.json` (and `changelog.json` when something changed) with the current
-PS5 pre-order / sale prices of *Call of Duty: Modern Warfare 4*, commit, and
-redeploy GitHub Pages. `tools/sweep.py` calls the Anysite REST API
-(`POST https://api.anysite.io/api/<path>`, header `access-token`, JSON body =
-params) — the same endpoints listed below, which `discover` also names when the
-sweep is done by hand through the Anysite MCP.
+Runs every morning as a scheduled Claude task bound to Tom's PC: the task
+reads the shops through the Anysite MCP (the sources below), writes the result
+to `new_offers.json`, runs `tools/apply_update.py`, commits `prices.json` /
+`changelog.json` and pushes to `main` from the PC. The push triggers the GitHub
+Action that redeploys GitHub Pages. If the PC is off at that time, the run is
+skipped and the next one catches up.
+
+`tools/sweep.py` does the same sweep through the Anysite REST API
+(`POST https://api.anysite.io/api/<path>`, header `access-token`) for anyone
+with an Anysite *API* plan; the MCP plans do not include the REST API.
 
 ## Ground rules
 
@@ -59,8 +61,8 @@ loyalty-discount remarks.
 
 ## How a run works
 
-1. `tools/sweep.py` reads every source above (one call each, the extras
-   best-effort) and writes `new_offers.json`:
+1. Read every source above (one call each, the extras best-effort) and write
+   `new_offers.json` in the repo root:
 
 ```json
 {
@@ -72,18 +74,18 @@ loyalty-discount remarks.
 }
 ```
 
-2. It hands that file to `tools/apply_update.py`, which validates, diffs against
-   the current `prices.json`, refreshes the `updated` timestamp and writes a
-   changelog line only when a price moved or a shop was really (de)listed
-   (a shop that merely could not be read is not logged as gone/new). It exits
-   2 and writes nothing when fewer than 3 valid offers came in — the workflow
-   then fails visibly instead of publishing a half-empty page.
-3. The workflow commits `prices.json` / `changelog.json` as `dmz-price-bot`
-   and redeploys GitHub Pages.
+2. Run `python3 tools/apply_update.py new_offers.json`. It validates, diffs
+   against the current `prices.json`, refreshes the `updated` timestamp and
+   writes a changelog line only when a price moved or a shop was really
+   (de)listed (a shop that merely could not be read is not logged as
+   gone/new). It exits 2 and writes nothing when fewer than 3 valid offers
+   came in — then do not push.
+3. Commit `prices.json` / `changelog.json` (author `dmz-price-bot`) and push
+   to `main`; GitHub Pages redeploys within a minute or two. Also copy the two
+   files to the Dropbox folder `Claude Playground\DMZ` so it stays in sync.
 
-Manual run: Actions tab → "Price sweep & deploy" → Run workflow.
-Local test: `ANYSITE_API_KEY=… SWEEP_DRY_RUN=1 python3 tools/sweep.py`.
-`SWEEP_EXTRAS=0` skips the four best-effort shops (saves credits).
+With an Anysite API key: `ANYSITE_API_KEY=… SWEEP_DRY_RUN=1 python3 tools/sweep.py`
+does steps 1–2 by itself; `SWEEP_EXTRAS=0` skips the four best-effort shops.
 
 `apply_update.py` options: `--note "text"` adds a manual log line (add a
 `"version"` field to the entry in `changelog.json` when the page itself

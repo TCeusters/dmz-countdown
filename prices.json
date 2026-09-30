@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-29T03:57:53Z",
+  "updated": "2026-09-30T03:54:50Z",
   "currency": "EUR",
   "game": "Call of Duty: Modern Warfare 4 (PS5)",
   "offers": [
@@ -32,6 +32,16 @@
       "url": "https://www.idealo.de/preisvergleich/OffersOfProduct/210757850_-call-of-duty-modern-warfare-4-ps5.html",
       "note": "Cheapest German shop on idealo.de. Shipping extra (€82.88 delivered in DE); delivery to Belgium not guaranteed.",
       "ships_be": "check"
+    },
+    {
+      "shop": "Smartoys (BE)",
+      "edition": "standard",
+      "format": "disc",
+      "price": 74.99,
+      "list_price": null,
+      "url": "https://www.smartoys.be/catalog/jeux-video-playstation-call-duty-modern-warfare-version-ps5-p-0196388866243.html",
+      "note": "Belgian shop, FR/EN box. Pre-order, in store from 23 Oct.",
+      "ships_be": "yes"
     },
     {
       "shop": "bol.com",
@@ -106,10 +116,6 @@
   ],
   "unavailable": [
     {
-      "shop": "Smartoys (BE)",
-      "reason": "blocked by bot protection"
-    },
-    {
       "shop": "Amazon.nl",
       "reason": "no MW4 PS5 listing yet"
     },
@@ -123,7 +129,7 @@
     },
     {
       "shop": "Game Mania",
-      "reason": "timed out (no readable listing)"
+      "reason": "no listing found"
     },
     {
       "shop": "Krëfel",

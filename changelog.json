@@ -1,5 +1,9 @@
 [
   {
+    "date": "2026-10-01",
+    "text": "Price sweep: MediaMarkt (BE) — FR version €79,99 → €74,99 ↓. Best deal: Amazon.fr €59,90."
+  },
+  {
     "date": "2026-09-27",
     "version": "4",
     "text": "Custom favicon and home-screen icon added. Daily price sweep now runs as a scheduled Claude task on Tom's PC (Anysite MCP); GitHub Action only deploys."

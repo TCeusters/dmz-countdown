@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-04T06:46:11Z",
+  "updated": "2026-10-05T03:52:41Z",
   "currency": "EUR",
   "game": "Call of Duty: Modern Warfare 4 (PS5)",
   "offers": [
@@ -41,16 +41,6 @@
       "list_price": null,
       "url": "https://www.mediamarkt.be/nl/product/_call-of-duty-modern-warfare-4-ps5-2238573.html",
       "note": "French box.",
-      "ships_be": "yes"
-    },
-    {
-      "shop": "Smartoys (BE)",
-      "edition": "standard",
-      "format": "disc",
-      "price": 74.99,
-      "list_price": null,
-      "url": "https://www.smartoys.be/catalog/jeux-video-playstation-call-duty-modern-warfare-version-ps5-p-0196388866243.html",
-      "note": "French box. Pre-order; collect in a Smartoys store across BE or delivery.",
       "ships_be": "yes"
     },
     {
@@ -118,6 +108,10 @@
     {
       "shop": "Amazon.nl",
       "reason": "no MW4 PS5 listing yet"
+    },
+    {
+      "shop": "Smartoys (BE)",
+      "reason": "blocked by bot protection"
     },
     {
       "shop": "Fnac.be",

@@ -1,18 +1,8 @@
 {
-  "updated": "2026-10-09T03:54:08Z",
+  "updated": "2026-10-10T03:52:56Z",
   "currency": "EUR",
   "game": "Call of Duty: Modern Warfare 4 (PS5)",
   "offers": [
-    {
-      "shop": "Amazon.fr",
-      "edition": "standard",
-      "format": "disc",
-      "price": 59.9,
-      "list_price": 79.99,
-      "url": "https://www.amazon.fr/dp/B0H37PK1NX",
-      "note": "French box, game itself is multi-language. Sold & shipped by Amazon, delivers to Belgium.",
-      "ships_be": "yes"
-    },
     {
       "shop": "MediaMarkt (BE) — UK version",
       "edition": "standard",
@@ -125,6 +115,10 @@
     }
   ],
   "unavailable": [
+    {
+      "shop": "Amazon.fr",
+      "reason": "Anysite source unreachable (HTTP 500, retried once)"
+    },
     {
       "shop": "Amazon.nl",
       "reason": "no MW4 PS5 listing yet"

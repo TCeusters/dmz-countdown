@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-11T03:51:28Z",
+  "updated": "2026-10-12T03:51:01Z",
   "currency": "EUR",
   "game": "Call of Duty: Modern Warfare 4 (PS5)",
   "offers": [
@@ -32,6 +32,16 @@
       "url": "https://www.idealo.de/preisvergleich/OffersOfProduct/210757850_-call-of-duty-modern-warfare-4-ps5.html",
       "note": "Cheapest German shop on idealo.de. Shipping extra (€71.50 delivered in DE); delivery to Belgium not guaranteed.",
       "ships_be": "check"
+    },
+    {
+      "shop": "MediaMarkt (BE) — FR version",
+      "edition": "standard",
+      "format": "disc",
+      "price": 74.99,
+      "list_price": null,
+      "url": "https://www.mediamarkt.be/nl/product/_call-of-duty-modern-warfare-4-ps5-2238573.html",
+      "note": "French box.",
+      "ships_be": "yes"
     },
     {
       "shop": "bol.com",
@@ -71,16 +81,6 @@
       "list_price": null,
       "url": "https://www.fr.fnac.be/a23163460/Call-Of-Duty-Modern-Warfare-4-PS5-FR-Jeu-video-Playstation-5",
       "note": "French box. Belgian shop; free in-store pickup.",
-      "ships_be": "yes"
-    },
-    {
-      "shop": "MediaMarkt (BE) — FR version",
-      "edition": "standard",
-      "format": "disc",
-      "price": 79.99,
-      "list_price": null,
-      "url": "https://www.mediamarkt.be/nl/product/_call-of-duty-modern-warfare-4-ps5-2238573.html",
-      "note": "French box.",
       "ships_be": "yes"
     },
     {

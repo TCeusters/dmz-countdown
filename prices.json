@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-15T04:42:10Z",
+  "updated": "2026-10-16T03:52:03Z",
   "currency": "EUR",
   "game": "Call of Duty: Modern Warfare 4 (PS5)",
   "offers": [
@@ -54,6 +54,16 @@
       "ships_be": "yes"
     },
     {
+      "shop": "bol.com — Steelbook Edition",
+      "edition": "steelbook",
+      "format": "disc",
+      "price": 74.99,
+      "list_price": null,
+      "url": "https://www.bol.com/be/nl/p/call-of-duty-modern-warfare-4-steelbook-edition-ps5/9300000301414410/",
+      "note": "Standard game in a steelbook case.",
+      "ships_be": "yes"
+    },
+    {
       "shop": "Coolblue (BE)",
       "edition": "standard",
       "format": "disc",
@@ -61,16 +71,6 @@
       "list_price": null,
       "url": "https://www.coolblue.be/nl/product/980723/call-of-duty-modern-warfare-4-ps5.html",
       "note": "Price read from the Coolblue NL listing; BE price is normally identical.",
-      "ships_be": "yes"
-    },
-    {
-      "shop": "Amazon.de",
-      "edition": "standard",
-      "format": "disc",
-      "price": 79.99,
-      "list_price": null,
-      "url": "https://www.amazon.de/dp/B0H37MK6VZ",
-      "note": "German listing, delivers to Belgium.",
       "ships_be": "yes"
     },
     {
@@ -94,16 +94,6 @@
       "ships_be": "n/a"
     },
     {
-      "shop": "bol.com — Steelbook Edition",
-      "edition": "steelbook",
-      "format": "disc",
-      "price": 79.99,
-      "list_price": null,
-      "url": "https://www.bol.com/be/nl/p/call-of-duty-modern-warfare-4-steelbook-edition-ps5/9300000301414410/",
-      "note": "Standard game in a steelbook case.",
-      "ships_be": "yes"
-    },
-    {
       "shop": "PlayStation Store (BE)",
       "edition": "vault",
       "format": "digital",
@@ -116,6 +106,10 @@
   ],
   "unavailable": [
     {
+      "shop": "Amazon.de",
+      "reason": "no price shown on listing"
+    },
+    {
       "shop": "Amazon.nl",
       "reason": "no MW4 PS5 listing yet"
     },
@@ -125,7 +119,7 @@
     },
     {
       "shop": "Dreamland",
-      "reason": "page read but no price shown"
+      "reason": "page unreachable (anti-bot)"
     },
     {
       "shop": "Game Mania",
